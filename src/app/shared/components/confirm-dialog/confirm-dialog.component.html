@@ -1,0 +1,16 @@
+@if (isVisible) {
+  <div class="dialog-backdrop" (click)="onCancel()"></div>
+
+  <div class="dialog-box" role="dialog" aria-modal="true">
+    <h2 class="dialog-title">{{ title }}</h2>
+    <p class="dialog-message">{{ message }}</p>
+    <div class="dialog-actions">
+      <button class="btn-cancel" (click)="onCancel()" id="confirm-dialog-cancel">
+        {{ cancelLabel }}
+      </button>
+      <button class="btn-confirm" (click)="onConfirm()" id="confirm-dialog-confirm">
+        {{ confirmLabel }}
+      </button>
+    </div>
+  </div>
+}

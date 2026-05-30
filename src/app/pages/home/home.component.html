@@ -1,0 +1,154 @@
+<div class="home-page">
+  <app-navbar />
+
+  <main class="home-main fade-in-up">
+
+    <!-- ── Welcome ─────────────────────────────────── -->
+    <section class="welcome-section">
+      @if (isLoggedIn && currentUser) {
+      <h1 class="welcome-title">Welcome, <span class="accent">{{ currentUser.name }}</span></h1>
+      <p class="welcome-role">
+        You are logged in as
+        <span class="role-pill {{ roleBadgeClass }}">{{ roleLabel }}</span>
+      </p>
+      } @else {
+      <h1 class="welcome-title">Welcome to <span class="accent">Authify</span></h1>
+      <p class="welcome-sub">A role-based student and teacher management system.</p>
+      <a routerLink="/auth" class="btn-primary" id="home-signin-btn" style="margin-top: 1rem; display: inline-block;">
+        Sign In to get started
+      </a>
+      }
+    </section>
+
+    <!-- ── Render backend warning ──────────────────── -->
+    <section class="render-warning">
+      <div class="render-warning-inner">
+        <span class="render-icon">&#9888;</span>
+        <div>
+          <p class="render-msg">
+            The backend is deployed on <strong>Render (free tier)</strong> and may take
+            <strong>30&ndash;60 seconds</strong> to wake up after inactivity.
+            Please wait a few seconds before performing any operations.
+          </p>
+          <p class="render-note">
+            Read the sections below to understand the project and role permissions before you begin.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Role & Permission Rules ─────────────────── -->
+    <section class="info-section">
+      <h2 class="section-heading">Role &amp; Permission Rules</h2>
+      <p class="section-sub">Every action on this platform is controlled by the role assigned to your account.</p>
+
+      <div class="role-cards">
+
+        <!-- Student -->
+        <div class="role-card" [class.role-card-active]="role.includes('USER')">
+          <div class="role-card-header">
+            <span class="role-pill badge-user">Student (USER)</span>
+            @if (role.includes('USER')) { <span class="you-badge">You</span> }
+          </div>
+          <ul class="rule-list">
+            <li class="rule allow">Can view all students</li>
+            <li class="rule deny">Cannot create, update or delete any student</li>
+            <li class="rule allow">Can view all teachers</li>
+            <li class="rule deny">Cannot create, update or delete any teacher</li>
+          </ul>
+        </div>
+
+        <!-- Teacher -->
+        <div class="role-card" [class.role-card-active]="role.includes('TEACHER')">
+          <div class="role-card-header">
+            <span class="role-pill badge-teacher">Teacher (TEACHER)</span>
+            @if (role.includes('TEACHER')) { <span class="you-badge">You</span> }
+          </div>
+          <ul class="rule-list">
+            <li class="rule allow">Can view all students</li>
+            <li class="rule allow">Can create new students</li>
+            <li class="rule partial">Can update only the students they created</li>
+            <li class="rule partial">Can delete only the students they created</li>
+            <li class="rule allow">Can view all teachers</li>
+            <li class="rule deny">Cannot create, update or delete any teacher</li>
+          </ul>
+        </div>
+
+        <!-- Admin -->
+        <div class="role-card" [class.role-card-active]="role.includes('ADMIN')">
+          <div class="role-card-header">
+            <span class="role-pill badge-admin">Admin (ADMIN)</span>
+            @if (role.includes('ADMIN')) { <span class="you-badge">You</span> }
+          </div>
+          <ul class="rule-list">
+            <li class="rule allow">Full CRUD on all students</li>
+            <li class="rule allow">Full CRUD on all teachers</li>
+            <li class="rule allow">Can manage every record on the platform</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── About this Project ──────────────────────── -->
+    <section class="info-section">
+      <h2 class="section-heading">About this Project</h2>
+      <p class="section-sub">
+        Authify is a full-stack role-based access control (RBAC) system with a secure backend and a modern Angular
+        frontend.
+      </p>
+
+      <div class="about-grid">
+
+        <!-- Frontend -->
+        <div class="about-card">
+          <h3 class="about-title">Frontend</h3>
+          <p class="about-sub">Built with Angular 21 (Standalone Components)</p>
+          <ul class="about-list">
+            <li>Angular 21 standalone components with lazy loading</li>
+            <li>Role-based route guards (<code>authGuard</code>)</li>
+            <li>HTTP interceptor for automatic JWT token injection</li>
+            <li>Reactive forms with inline field-level backend error display</li>
+            <li>ChangeDetectorRef for instant UI updates on async data</li>
+            <li>Toast notifications for all user feedback</li>
+            <li>Permission checks on every Create / Update / Delete action</li>
+            <li>Responsive design with vanilla CSS design tokens</li>
+          </ul>
+        </div>
+
+        <!-- Backend -->
+        <div class="about-card">
+          <h3 class="about-title">Backend</h3>
+          <p class="about-sub">Built with Spring Boot 3 + Spring Security</p>
+          <ul class="about-list">
+            <li>JWT-based stateless authentication (access tokens)</li>
+            <li>Role-based access control: ADMIN, TEACHER, USER</li>
+            <li>Method-level and URL-level permission enforcement</li>
+            <li>Email OTP verification on registration</li>
+            <li>Forgot password flow with OTP via email</li>
+            <li>Password reset with token expiry validation</li>
+            <li>Audit fields on records: createdBy, updatedBy, timestamps</li>
+            <li>Clean RESTful API with structured error responses</li>
+            <li>Deployed on Render (free tier &mdash; cold start applies)</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Quick nav ───────────────────────────────── -->
+    @if (isLoggedIn) {
+    <section class="quick-nav">
+      <a routerLink="/student" class="quick-card" id="home-student-link">
+        <span class="quick-label">Students</span>
+        <span class="quick-arrow">&rarr;</span>
+      </a>
+      <a routerLink="/teacher" class="quick-card" id="home-teacher-link">
+        <span class="quick-label">Teachers</span>
+        <span class="quick-arrow">&rarr;</span>
+      </a>
+    </section>
+    }
+
+  </main>
+</div>

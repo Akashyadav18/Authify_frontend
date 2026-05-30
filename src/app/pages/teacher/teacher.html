@@ -1,0 +1,117 @@
+<div class="teacher-page">
+
+  <app-navbar />
+
+  <app-confirm-dialog [isVisible]="showConfirm"
+    [message]="'Are you sure you want to delete ' + (selectedTeacher?.fullName ?? 'this teacher') + '? This action cannot be undone.'"
+    (confirmed)="confirmDelete()" (cancelled)="cancelDelete()" />
+
+  <!-- Page Header -->
+  <div class="page-header fade-in-up">
+    <div class="header-badge">Teacher Portal</div>
+    <h1 class="page-title">All Teachers</h1>
+    <p class="page-subtitle">Browse registered teachers. Use the action buttons to manage each record.</p>
+    <button class="btn-create" (click)="onCreateTeacher()" id="create-teacher-btn">
+      Add Teacher
+    </button>
+  </div>
+
+  <!-- Count -->
+  @if (!isLoading && !loadError && teacherList.length > 0) {
+  <div class="list-meta fade-in-up">
+    <span class="list-count">{{ teacherList.length }} teacher{{ teacherList.length !== 1 ? 's' : '' }} found</span>
+  </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading teachers&hellip;</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (!isLoading && loadError) {
+  <div class="error-state fade-in-up">
+    <h3 class="error-title">Could not load teachers</h3>
+    <p class="error-desc">{{ loadError }}</p>
+    <div class="error-actions">
+      @if (!isLoggedIn) {
+      <a class="btn-login" routerLink="/auth" id="teacher-login-btn">Sign In</a>
+      } @else {
+      <button class="btn-retry" (click)="getAllTeachers()" id="teacher-retry-btn">Retry</button>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Cards -->
+  @if (!isLoading && !loadError) {
+  <div class="cards-grid fade-in-up">
+
+    @if (teacherList.length === 0) {
+    <div class="empty-state">
+      <h3 class="empty-title">No teachers yet</h3>
+      <p class="empty-desc">Click "Add Teacher" to create the first record.</p>
+    </div>
+    }
+
+    @for (teacher of teacherList; track teacher.id) {
+    <div class="teacher-card">
+
+      <div class="card-header">
+        <div class="avatar" [class]="'avatar-' + getGenderClass(teacher.gender)">
+          {{ getInitials(teacher.fullName) }}
+        </div>
+        <div class="card-identity">
+          <h3 class="teacher-name">{{ teacher.fullName }}</h3>
+          <span class="gender-badge" [class]="'gender-' + getGenderClass(teacher.gender)">
+            {{ teacher.gender}}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">Teacher ID</span>
+          <span class="info-value info-mono">{{ teacher.teacherId ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Phone</span>
+          <span class="info-value">{{ teacher.phoneNumber ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Qualification</span>
+          <span class="info-value">{{ teacher.qualification ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Experience</span>
+          <span class="info-value">
+            {{ teacher.experienceYear != null ? teacher.experienceYear + ' yr' + (teacher.experienceYear !== 1 ? 's' :
+            '') : '—' }}
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">System ID</span>
+          <span class="info-value">{{ teacher.id != null ? '#' + teacher.id : '—' }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-update" (click)="onUpdate(teacher)" id="update-teacher-btn-{{ teacher.id }}">
+          Update
+        </button>
+        <button class="btn-delete" (click)="onDelete(teacher)" id="delete-teacher-btn-{{ teacher.id }}">
+          Delete
+        </button>
+      </div>
+
+    </div>
+    }
+  </div>
+  }
+
+</div>

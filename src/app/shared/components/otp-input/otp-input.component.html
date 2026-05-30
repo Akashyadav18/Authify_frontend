@@ -1,0 +1,16 @@
+<div class="flex items-center gap-2">
+  @for (digit of digits(); track $index) {
+    <input
+      #otpBox
+      type="text"
+      inputmode="numeric"
+      maxlength="1"
+      class="otp-digit"
+      [class.filled]="digit !== ''"
+      [value]="digit"
+      (input)="onInput($event, $index)"
+      (keydown)="onKeydown($event, $index)"
+      (paste)="onPaste($event)"
+    />
+  }
+</div>

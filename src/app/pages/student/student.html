@@ -1,0 +1,141 @@
+<div class="student-page">
+
+  <app-navbar />
+
+  <app-confirm-dialog [isVisible]="showConfirm"
+    [message]="'Are you sure you want to delete ' + (selectedStudent?.fullName ?? 'this student') + '? This action cannot be undone.'"
+    (confirmed)="confirmDelete()" (cancelled)="cancelDelete()" />
+
+  <!-- Page Header -->
+  <div class="page-header fade-in-up">
+    <div class="header-badge">Student Portal</div>
+    <h1 class="page-title">All Students</h1>
+    <p class="page-subtitle">Browse registered students. Use the action buttons to manage each record.</p>
+    <button class="btn-create" (click)="onCreateStudent()" id="create-student-btn">
+      Add Student
+    </button>
+  </div>
+
+  <!-- Count -->
+  @if (!isLoading && !loadError && studentList.length > 0) {
+  <div class="list-meta fade-in-up">
+    <span class="list-count">{{ studentList.length }} student{{ studentList.length !== 1 ? 's' : '' }} found</span>
+  </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading students&hellip;</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (!isLoading && loadError) {
+  <div class="error-state fade-in-up">
+    <h3 class="error-title">Could not load students</h3>
+    <p class="error-desc">{{ loadError }}</p>
+    <div class="error-actions">
+      @if (!isLoggedIn) {
+      <a class="btn-login" routerLink="/auth" id="student-login-btn">Sign In</a>
+      } @else {
+      <button class="btn-retry" (click)="getAllStudents()" id="student-retry-btn">Retry</button>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Cards -->
+  @if (!isLoading && !loadError) {
+  <div class="cards-grid fade-in-up">
+
+    @if (studentList.length === 0) {
+    <div class="empty-state">
+      <h3 class="empty-title">No students yet</h3>
+      <p class="empty-desc">Click "Add Student" to create the first record.</p>
+    </div>
+    }
+
+    @for (student of studentList; track student.stdId) {
+    <div class="student-card">
+
+      <div class="card-header">
+        <div class="avatar" [class]="'avatar-' + getGenderClass(student.gender)">
+          {{ getInitials(student.fullName) }}
+        </div>
+        <div class="card-identity">
+          <h3 class="student-name">{{ student.fullName ?? '—' }}</h3>
+          <span class="gender-badge" [class]="'gender-' + getGenderClass(student.gender)">
+            {{ student.gender ?? 'N/A' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">Roll No</span>
+          <span class="info-value">{{ student.rollNo ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Student ID</span>
+          <span class="info-value info-mono">{{ student.stdId ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">System ID</span>
+          <span class="info-value">{{ student.id != null ? '#' + student.id : '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Username</span>
+          <span class="info-value" [class.text-muted]="!student.username">
+            {{ student.username ?? '—' }}
+          </span>
+        </div>
+
+        @if (student.createdBy || student.updatedBy || student.createdAt || student.updatedAt) {
+          <div class="card-divider" style="margin: 0.5rem 0;"></div>
+        }
+
+        @if (student.createdBy) {
+          <div class="info-row">
+            <span class="info-label">Created By</span>
+            <span class="info-value">{{ student.createdBy }}</span>
+          </div>
+        }
+        @if (student.createdAt) {
+          <div class="info-row">
+            <span class="info-label">Created At</span>
+            <span class="info-value">{{ formatDate(student.createdAt) }}</span>
+          </div>
+        }
+        @if (student.updatedBy) {
+          <div class="info-row">
+            <span class="info-label">Updated By</span>
+            <span class="info-value">{{ student.updatedBy }}</span>
+          </div>
+        }
+        @if (student.updatedAt) {
+          <div class="info-row">
+            <span class="info-label">Updated At</span>
+            <span class="info-value">{{ formatDate(student.updatedAt) }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-update" (click)="onUpdate(student)" id="update-btn-{{ student.id }}">
+          Update
+        </button>
+        <button class="btn-delete" (click)="onDelete(student)" id="delete-btn-{{ student.id }}">
+          Delete
+        </button>
+      </div>
+
+    </div>
+    }
+  </div>
+  }
+
+</div>

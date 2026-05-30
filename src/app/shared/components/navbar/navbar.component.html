@@ -1,0 +1,46 @@
+<nav class="site-nav">
+  <div class="site-nav-inner">
+
+    <!-- Logo / Home link -->
+    <a routerLink="/" class="nav-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      Authify
+    </a>
+
+    <!-- Nav links — active class driven by current route, NOT by role -->
+    <div class="nav-links">
+      <a routerLink="/"
+         routerLinkActive="nav-link-active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="nav-link">Home</a>
+      <a routerLink="/student"
+         routerLinkActive="nav-link-active"
+         class="nav-link">Student</a>
+      <a routerLink="/teacher"
+         routerLinkActive="nav-link-active"
+         class="nav-link">Teacher</a>
+    </div>
+
+    <!-- Auth state -->
+    <div class="nav-actions">
+      @if (isLoggedIn && currentUser) {
+        <div style="display: flex; align-items: center; gap: 0.625rem;">
+          <div style="text-align: right; line-height: 1.3;">
+            <p style="font-size: 0.875rem; font-weight: 600; color: var(--text);">{{ currentUser.name }}</p>
+            <p class="nav-user-email" style="font-size: 0.8125rem; color: var(--text-muted);">{{ currentUser.email }}</p>
+          </div>
+          <button (click)="logout()" class="btn-secondary"
+                  style="padding: 0.4rem 0.875rem; font-size: 0.875rem; white-space: nowrap;">
+            Logout
+          </button>
+        </div>
+      } @else {
+        <a routerLink="/auth" class="btn-primary">Sign In</a>
+      }
+    </div>
+
+  </div>
+</nav>

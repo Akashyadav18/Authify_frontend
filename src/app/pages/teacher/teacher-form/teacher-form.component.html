@@ -1,0 +1,162 @@
+<div class="form-page">
+  <app-navbar />
+
+  <div class="form-container fade-in-up">
+
+    <button class="back-link" (click)="onCancel()" id="teacher-form-back">
+      &larr; Back to Teachers
+    </button>
+
+    <div class="form-card">
+
+      <div class="form-header">
+        <h1 class="form-title">{{ pageTitle }}</h1>
+        <p class="form-subtitle">
+          {{ isEditMode ? 'Update the teacher details below.' : 'Fill in the details to add a new teacher.' }}
+        </p>
+      </div>
+
+      @if (isLoading) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading teacher data&hellip;</p>
+        </div>
+      }
+
+      @if (!isLoading) {
+        <form (ngSubmit)="onSubmit()" novalidate>
+
+          @if (fieldErrors['_global']) {
+            <div class="global-error">{{ fieldErrors['_global'] }}</div>
+          }
+
+          <div class="field-group">
+            <label class="field-label" for="firstName">First Name</label>
+            <input
+              id="firstName"
+              type="text"
+              class="field-input"
+              [class.input-error]="fieldErrors['firstName']"
+              [(ngModel)]="firstName"
+              name="firstName"
+              placeholder="e.g. Sarah"
+              (input)="clearFieldError('firstName')"
+            />
+            @if (fieldErrors['firstName']) {
+              <span class="error-text">{{ fieldErrors['firstName'] }}</span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="lastName">Last Name</label>
+            <input
+              id="lastName"
+              type="text"
+              class="field-input"
+              [class.input-error]="fieldErrors['lastName']"
+              [(ngModel)]="lastName"
+              name="lastName"
+              placeholder="e.g. Johnson"
+              (input)="clearFieldError('lastName')"
+            />
+            @if (fieldErrors['lastName']) {
+              <span class="error-text">{{ fieldErrors['lastName'] }}</span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="phoneNumber">Phone Number</label>
+            <input
+              id="phoneNumber"
+              type="text"
+              class="field-input"
+              [class.input-error]="fieldErrors['phoneNumber']"
+              [(ngModel)]="phoneNumber"
+              name="phoneNumber"
+              placeholder="10-digit number"
+              maxlength="10"
+              (input)="clearFieldError('phoneNumber')"
+            />
+            @if (fieldErrors['phoneNumber']) {
+              <span class="error-text">{{ fieldErrors['phoneNumber'] }}</span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="experienceYear">Experience (Years)</label>
+            <input
+              id="experienceYear"
+              type="number"
+              class="field-input"
+              [class.input-error]="fieldErrors['experienceYear']"
+              [(ngModel)]="experienceYear"
+              name="experienceYear"
+              placeholder="e.g. 5"
+              min="1"
+              (input)="clearFieldError('experienceYear')"
+            />
+            @if (fieldErrors['experienceYear']) {
+              <span class="error-text">{{ fieldErrors['experienceYear'] }}</span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="qualification">Qualification</label>
+            <input
+              id="qualification"
+              type="text"
+              class="field-input"
+              [class.input-error]="fieldErrors['qualification']"
+              [(ngModel)]="qualification"
+              name="qualification"
+              placeholder="e.g. M.Sc. Physics"
+              (input)="clearFieldError('qualification')"
+            />
+            @if (fieldErrors['qualification']) {
+              <span class="error-text">{{ fieldErrors['qualification'] }}</span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="gender">Gender</label>
+            <select
+              id="gender"
+              class="field-input field-select"
+              [(ngModel)]="gender"
+              name="gender"
+            >
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="onCancel()"
+              id="teacher-form-cancel"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn-submit"
+              [disabled]="isSubmitting"
+              id="teacher-form-submit"
+            >
+              @if (isSubmitting) {
+                <span class="btn-spinner"></span> Saving&hellip;
+              } @else {
+                {{ isEditMode ? 'Save Changes' : 'Create Teacher' }}
+              }
+            </button>
+          </div>
+
+        </form>
+      }
+
+    </div>
+  </div>
+</div>

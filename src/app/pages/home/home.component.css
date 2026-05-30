@@ -1,0 +1,294 @@
+/* ── Page ────────────────────────────────────────── */
+.home-page {
+  padding-top: 64px;
+  min-height: 100vh;
+  background: var(--bg, #f9fafb);
+}
+
+.home-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* ── Welcome ─────────────────────────────────────── */
+.welcome-section {
+  text-align: center;
+  padding: 2rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text, #111827);
+  margin-bottom: 0.5rem;
+  line-height: 1.25;
+}
+
+.accent { color: #2563eb; }
+
+.welcome-sub {
+  font-size: 1rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.welcome-role {
+  font-size: 0.9375rem;
+  color: var(--text-muted, #6b7280);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Role pill (shared) ──────────────────────────── */
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.badge-user    { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.badge-teacher { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+.badge-admin   { background: #fdf4ff; color: #9333ea; border: 1px solid #e9d5ff; }
+.badge-guest   { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+
+/* ── Render warning ──────────────────────────────── */
+.render-warning {
+  background: #fff5f5;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.render-warning-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.render-icon {
+  font-size: 1.375rem;
+  color: #dc2626;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 0.1rem;
+}
+
+.render-msg {
+  font-size: 0.9375rem;
+  color: #dc2626;
+  font-weight: 500;
+  line-height: 1.55;
+  margin-bottom: 0.375rem;
+}
+
+.render-msg strong { color: #b91c1c; }
+
+.render-note {
+  font-size: 0.875rem;
+  color: #ef4444;
+  font-style: italic;
+}
+
+/* ── Sections ────────────────────────────────────── */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text, #111827);
+}
+
+.section-sub {
+  font-size: 0.9375rem;
+  color: var(--text-muted, #6b7280);
+  margin-top: -0.75rem;
+}
+
+/* ── Role cards ──────────────────────────────────── */
+.role-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.role-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.125rem 1.25rem 1.375rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.role-card-active {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.role-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.you-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+
+/* ── Rule list ───────────────────────────────────── */
+.rule-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.rule {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.45;
+  color: var(--text, #111827);
+}
+
+.rule::before {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 900;
+  margin-top: 0.1rem;
+}
+
+.rule.allow::before   { content: '✓'; background: #dcfce7; color: #16a34a; }
+.rule.deny::before    { content: '✕'; background: #fee2e2; color: #dc2626; }
+.rule.partial::before { content: '~'; background: #fef3c7; color: #d97706; font-size: 0.75rem; }
+
+/* ── About grid ──────────────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.about-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.25rem 1.375rem 1.5rem;
+}
+
+.about-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text, #111827);
+  margin-bottom: 0.2rem;
+}
+
+.about-sub {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #6b7280);
+  margin-bottom: 0.875rem;
+}
+
+.about-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.about-list li {
+  font-size: 0.875rem;
+  color: var(--text, #111827);
+  padding-left: 1.1rem;
+  position: relative;
+  line-height: 1.5;
+}
+
+.about-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.about-list code {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 0 0.25rem;
+  font-size: 0.8125rem;
+  font-family: 'Courier New', monospace;
+}
+
+/* ── Quick nav ───────────────────────────────────── */
+.quick-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.quick-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text, #111827);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.quick-card:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.1);
+}
+
+.quick-arrow { color: #2563eb; font-size: 1.125rem; }
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 767px) {
+  .role-cards  { grid-template-columns: 1fr; }
+  .about-grid  { grid-template-columns: 1fr; }
+  .quick-nav   { grid-template-columns: 1fr; }
+  .welcome-title { font-size: 1.625rem; }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .role-cards { grid-template-columns: 1fr 1fr; }
+}

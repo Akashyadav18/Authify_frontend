@@ -1,0 +1,88 @@
+<div class="form-page">
+  <app-navbar />
+
+  <div class="form-container fade-in-up">
+
+    <button class="back-link" (click)="onCancel()" id="student-form-back">
+      &larr; Back to Students
+    </button>
+
+    <div class="form-card">
+
+      <div class="form-header">
+        <h1 class="form-title">{{ pageTitle }}</h1>
+        <p class="form-subtitle">
+          {{ isEditMode ? 'Update the student details below.' : 'Fill in the details to add a new student.' }}
+        </p>
+      </div>
+
+      @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading student data&hellip;</p>
+      </div>
+      }
+
+      @if (!isLoading) {
+      <form (ngSubmit)="onSubmit()" #studentForm="ngForm" novalidate>
+
+        @if (fieldErrors['_global']) {
+          <div class="global-error">{{ fieldErrors['_global'] }}</div>
+        }
+
+        <div class="field-group">
+          <label class="field-label" for="firstName">First Name</label>
+          <input id="firstName" type="text" class="field-input" [class.input-error]="fieldErrors['firstName']"
+            [(ngModel)]="firstName" name="firstName" placeholder="e.g. John" (input)="clearFieldError('firstName')" />
+          @if (fieldErrors['firstName']) {
+          <span class="error-text">{{ fieldErrors['firstName'] }}</span>
+          }
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="lastName">Last Name</label>
+          <input id="lastName" type="text" class="field-input" [class.input-error]="fieldErrors['lastName']"
+            [(ngModel)]="lastName" name="lastName" placeholder="e.g. Doe" (input)="clearFieldError('lastName')" />
+          @if (fieldErrors['lastName']) {
+          <span class="error-text">{{ fieldErrors['lastName'] }}</span>
+          }
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="rollNo">Roll Number</label>
+          <input id="rollNo" type="text" class="field-input" [class.input-error]="fieldErrors['rollNo']"
+            [(ngModel)]="rollNo" name="rollNo" placeholder="Numbers only, e.g. 1042"
+            (input)="clearFieldError('rollNo')" />
+          @if (fieldErrors['rollNo']) {
+          <span class="error-text">{{ fieldErrors['rollNo'] }}</span>
+          }
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="gender">Gender</label>
+          <select id="gender" class="field-input field-select" [(ngModel)]="gender" name="gender">
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="onCancel()" id="student-form-cancel">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="isSubmitting" id="student-form-submit">
+            @if (isSubmitting) {
+            <span class="btn-spinner"></span> Saving&hellip;
+            } @else {
+            {{ isEditMode ? 'Save Changes' : 'Create Student' }}
+            }
+          </button>
+        </div>
+
+      </form>
+      }
+
+    </div>
+  </div>
+</div>
