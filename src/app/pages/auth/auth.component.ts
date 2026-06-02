@@ -52,6 +52,7 @@ export class AuthComponent {
         // Fetch profile to check accountVerified
         this.userService.getProfile().subscribe({
           next: (user) => {
+            console.log("login....");
             if (!user.accountVerified) {
               // Email not verified — auto-send OTP then go to verify page
               this.toast.info(`Welcome ${user.name}! Sending OTP to verify your email…`);
@@ -102,6 +103,7 @@ export class AuthComponent {
       .subscribe({
         next: () => {
           this.loading.set(false);
+          console.log("registering....");
           this.success.set('Account created! Please login to verify your email.');
           this.toast.success('Account created! Please sign in.');
           // Switch to login tab — user will login and OTP is sent automatically

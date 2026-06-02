@@ -4,7 +4,7 @@
 
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://your-production-api.com/api/auth',
-  studentApi: 'https://your-production-api.com/api',
-  teacherApi: 'https://your-production-api.com/api',
+  apiBaseUrl: 'https://authify-deployment-frll.onrender.com/api/auth',
+  studentApi: 'https://authify-deployment-frll.onrender.com/api',
+  teacherApi: 'https://authify-deployment-frll.onrender.com/api',
 };
