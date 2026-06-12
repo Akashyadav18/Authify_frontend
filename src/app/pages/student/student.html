@@ -16,44 +16,12 @@
     </button>
   </div>
 
-  <!-- Filter + Sort row -->
-  <div class="filter-bar fade-in-up">
-    <div class="filter-group">
-      <label class="filter-label" for="student-search">Search</label>
-      <input
-        id="student-search"
-        class="filter-input"
-        [class.filter-active]="hasActiveFilter"
-        type="text"
-        placeholder="Username, name or roll no…"
-        [(ngModel)]="search"
-        (ngModelChange)="onSearchChange($event)"
-      />
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="student-sortby">Sort By</label>
-      <select id="student-sortby" class="filter-select" [(ngModel)]="sortBy" (ngModelChange)="onSortByChange()">
-        @for (opt of sortByOptions; track opt) {
-          <option [value]="opt">{{ opt }}</option>
-        }
-      </select>
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="student-sortdir">Order</label>
-      <select id="student-sortdir" class="filter-select" [(ngModel)]="sortDir" (ngModelChange)="onSortDirChange()">
-        @for (opt of sortDirOptions; track opt) {
-          <option [value]="opt">{{ opt | uppercase }}</option>
-        }
-      </select>
-    </div>
-
-    @if (!isLoading && !loadError && pagedData) {
-      <span class="filter-meta">
-        {{ totalElements }} student{{ totalElements !== 1 ? 's' : '' }}
-        &nbsp;·&nbsp; Page {{ pageNo }} / {{ pagedData.totalPages }}
-      </span>
-    }
+  <!-- Count -->
+  @if (!isLoading && !loadError && studentList.length > 0) {
+  <div class="list-meta fade-in-up">
+    <span class="list-count">{{ studentList.length }} student{{ studentList.length !== 1 ? 's' : '' }} found</span>
   </div>
+  }
 
   <!-- Loading -->
   @if (isLoading) {
@@ -84,8 +52,8 @@
 
     @if (studentList.length === 0) {
     <div class="empty-state">
-      <h3 class="empty-title">No students found</h3>
-      <p class="empty-desc">Try adjusting your search or filters.</p>
+      <h3 class="empty-title">No students yet</h3>
+      <p class="empty-desc">Click "Add Student" to create the first record.</p>
     </div>
     }
 
@@ -113,7 +81,11 @@
         </div>
         <div class="info-row">
           <span class="info-label">Student ID</span>
-          <span class="info-value info-mono">{{ student.stdId }}</span>
+          <span class="info-value info-mono">{{ student.stdId ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">System ID</span>
+          <span class="info-value">{{ student.id != null ? '#' + student.id : '—' }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Username</span>
@@ -122,7 +94,7 @@
           </span>
         </div>
 
-        @if (student.createdBy || student.createdAt) {
+        @if (student.createdBy || student.updatedBy || student.createdAt || student.updatedAt) {
           <div class="card-divider" style="margin: 0.5rem 0;"></div>
         }
 
@@ -138,6 +110,18 @@
             <span class="info-value">{{ formatDate(student.createdAt) }}</span>
           </div>
         }
+        @if (student.updatedBy) {
+          <div class="info-row">
+            <span class="info-label">Updated By</span>
+            <span class="info-value">{{ student.updatedBy }}</span>
+          </div>
+        }
+        @if (student.updatedAt) {
+          <div class="info-row">
+            <span class="info-label">Updated At</span>
+            <span class="info-value">{{ formatDate(student.updatedAt) }}</span>
+          </div>
+        }
       </div>
 
       <div class="card-actions">
@@ -151,34 +135,6 @@
 
     </div>
     }
-  </div>
-  }
-
-  <!-- Pagination -->
-  @if (!isLoading && !loadError && pagedData && pagedData.totalPages > 1) {
-  <div class="pagination-row fade-in-up">
-    <button
-      class="page-btn"
-      (click)="prevPage()"
-      [disabled]="pagedData.firstPage"
-      id="student-prev-btn"
-    >&#8592; Prev</button>
-
-    @for (p of getPageNumbers(); track p) {
-      <button
-        class="page-btn"
-        [class.page-active]="p === pageNo"
-        (click)="goToPage(p)"
-        id="student-page-btn-{{ p }}"
-      >{{ p }}</button>
-    }
-
-    <button
-      class="page-btn"
-      (click)="nextPage()"
-      [disabled]="pagedData.lastPage"
-      id="student-next-btn"
-    >Next &#8594;</button>
   </div>
   }
 

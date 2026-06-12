@@ -2,104 +2,45 @@
   <div class="site-nav-inner">
 
     <!-- Logo / Home link -->
-    <a routerLink="/" class="nav-logo" (click)="closeMobile()">
+    <a routerLink="/" class="nav-logo">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
       </svg>
       Authify
     </a>
 
-    <!-- Desktop nav links (hidden on mobile) -->
-    <div class="nav-links nav-links-desktop">
-      <a routerLink="/" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: true }"
-        class="nav-link">Home</a>
-      <a routerLink="/student" routerLinkActive="nav-link-active" class="nav-link">Students</a>
-      <a routerLink="/teacher" routerLinkActive="nav-link-active" class="nav-link">Teachers</a>
+    <!-- Nav links — active class driven by current route, NOT by role -->
+    <div class="nav-links">
+      <a routerLink="/"
+         routerLinkActive="nav-link-active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="nav-link">Home</a>
+      <a routerLink="/student"
+         routerLinkActive="nav-link-active"
+         class="nav-link">Student</a>
+      <a routerLink="/teacher"
+         routerLinkActive="nav-link-active"
+         class="nav-link">Teacher</a>
     </div>
 
-    <!-- Desktop auth state -->
-    <div class="nav-actions nav-actions-desktop">
+    <!-- Auth state -->
+    <div class="nav-actions">
       @if (isLoggedIn && currentUser) {
-      <!-- User avatar / dropdown trigger -->
-      <div class="user-menu" [class.open]="dropdownOpen">
-        <button class="user-trigger" (click)="toggleDropdown()" id="nav-user-btn" type="button">
-          <span class="user-avatar">{{ firstName[0]?.toUpperCase() }}</span>
-          <!-- <span class="user-firstname">{{ firstName }}</span> -->
-          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-        @if (dropdownOpen) {
-        <div class="user-dropdown">
-          <div class="dropdown-info">
-            <p class="dropdown-name">{{ currentUser.name }}</p>
-            <p class="dropdown-email">{{ currentUser.email }}</p>
+        <div style="display: flex; align-items: center; gap: 0.625rem;">
+          <div style="text-align: right; line-height: 1.3;">
+            <p style="font-size: 0.875rem; font-weight: 600; color: var(--text);">{{ currentUser.name }}</p>
+            <p class="nav-user-email" style="font-size: 0.8125rem; color: var(--text-muted);">{{ currentUser.email }}</p>
           </div>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-logout" (click)="logout()" id="nav-logout-btn" type="button">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+          <button (click)="logout()" class="btn-secondary"
+                  style="padding: 0.4rem 0.875rem; font-size: 0.875rem; white-space: nowrap;">
             Logout
           </button>
         </div>
-        }
-      </div>
       } @else {
-      <a routerLink="/auth" class="btn-primary" id="nav-signin-btn">Sign In</a>
+        <a routerLink="/auth" class="btn-primary">Sign In</a>
       }
     </div>
 
-    <!-- Hamburger button — mobile only -->
-    <button class="hamburger" (click)="toggleMobile()" [class.active]="mobileOpen" id="nav-hamburger-btn" type="button"
-      aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-
-  </div><!-- /site-nav-inner -->
-
-  <!-- Mobile drawer -->
-  <div class="mobile-drawer" [class.open]="mobileOpen">
-    <div class="mobile-nav-links">
-      <a routerLink="/" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: true }"
-        class="nav-link mobile-nav-link" (click)="closeMobile()">Home</a>
-      <a routerLink="/student" routerLinkActive="nav-link-active" class="nav-link mobile-nav-link"
-        (click)="closeMobile()">Students</a>
-      <a routerLink="/teacher" routerLinkActive="nav-link-active" class="nav-link mobile-nav-link"
-        (click)="closeMobile()">Teachers</a>
-    </div>
-
-    <div class="mobile-auth">
-      @if (isLoggedIn && currentUser) {
-      <div class="mobile-user-info">
-        <span class="user-avatar">{{ firstName[0]?.toUpperCase() }}</span>
-        <div>
-          <p class="mobile-user-name">{{ currentUser.name }}</p>
-          <p class="mobile-user-email">{{ currentUser.email }}</p>
-        </div>
-      </div>
-      <button class="btn-secondary mobile-logout-btn" (click)="logout()" id="nav-mobile-logout-btn" type="button">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-          <polyline points="16 17 21 12 16 7" />
-          <line x1="21" y1="12" x2="9" y2="12" />
-        </svg>
-        Logout
-      </button>
-      } @else {
-      <a routerLink="/auth" class="btn-primary mobile-signin-btn" (click)="closeMobile()" id="nav-mobile-signin-btn">
-        Sign In / Register
-      </a>
-      }
-    </div>
   </div>
-
 </nav>

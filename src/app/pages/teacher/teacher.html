@@ -16,97 +16,12 @@
     </button>
   </div>
 
-  <!-- Filter + Sort rows -->
-  <div class="filter-bar fade-in-up">
-    <!-- Row 1: ID, Name, Qualification -->
-    <div class="filter-group">
-      <label class="filter-label" for="teacher-id">ID</label>
-      <input
-        id="teacher-id"
-        class="filter-input filter-input-sm"
-        [class.filter-active]="filterId.trim().length > 0"
-        type="number"
-        min="1"
-        placeholder="e.g. 3"
-        [(ngModel)]="filterId"
-        (ngModelChange)="onIdChange()"
-      />
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="teacher-name">Name</label>
-      <input
-        id="teacher-name"
-        class="filter-input"
-        [class.filter-active]="filterName.trim().length > 0"
-        type="text"
-        placeholder="Search by name…"
-        [(ngModel)]="filterName"
-        (ngModelChange)="onNameChange($event)"
-      />
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="teacher-qual">Qualification</label>
-      <input
-        id="teacher-qual"
-        class="filter-input"
-        [class.filter-active]="filterQual.trim().length > 0"
-        type="text"
-        placeholder="e.g. M.Sc"
-        [(ngModel)]="filterQual"
-        (ngModelChange)="onQualChange($event)"
-      />
-    </div>
+  <!-- Count -->
+  @if (!isLoading && !loadError && teacherList.length > 0) {
+  <div class="list-meta fade-in-up">
+    <span class="list-count">{{ teacherList.length }} teacher{{ teacherList.length !== 1 ? 's' : '' }} found</span>
   </div>
-
-  <div class="filter-bar filter-bar-row2 fade-in-up">
-    <!-- Row 2: Date range + Sort -->
-    <div class="filter-group">
-      <label class="filter-label" for="teacher-start">From</label>
-      <input
-        id="teacher-start"
-        class="filter-input filter-input-date"
-        [class.filter-active]="startDate.length > 0"
-        type="date"
-        [(ngModel)]="startDate"
-        (ngModelChange)="onDateChange()"
-      />
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="teacher-end">To</label>
-      <input
-        id="teacher-end"
-        class="filter-input filter-input-date"
-        [class.filter-active]="endDate.length > 0"
-        type="date"
-        [(ngModel)]="endDate"
-        (ngModelChange)="onDateChange()"
-      />
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="teacher-sortby">Sort By</label>
-      <select id="teacher-sortby" class="filter-select" [(ngModel)]="sortBy" (ngModelChange)="onSortByChange()">
-        @for (opt of sortByOptions; track opt) {
-          <option [value]="opt">{{ opt }}</option>
-        }
-      </select>
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="teacher-sortdir">Order</label>
-      <select id="teacher-sortdir" class="filter-select" [(ngModel)]="sortDir" (ngModelChange)="onSortDirChange()">
-        @for (opt of sortDirOptions; track opt) {
-          <option [value]="opt">{{ opt }}</option>
-        }
-      </select>
-    </div>
-
-    @if (!isLoading && !loadError && pagedData) {
-      <span class="filter-meta">
-        {{ totalElements }} teacher{{ totalElements !== 1 ? 's' : '' }}
-        &nbsp;·&nbsp; Page {{ pageNo }} / {{ pagedData.totalPages }}
-      </span>
-    }
-  </div>
-
+  }
 
   <!-- Loading -->
   @if (isLoading) {
@@ -137,8 +52,8 @@
 
     @if (teacherList.length === 0) {
     <div class="empty-state">
-      <h3 class="empty-title">No teachers found</h3>
-      <p class="empty-desc">Try adjusting your filters.</p>
+      <h3 class="empty-title">No teachers yet</h3>
+      <p class="empty-desc">Click "Add Teacher" to create the first record.</p>
     </div>
     }
 
@@ -152,7 +67,7 @@
         <div class="card-identity">
           <h3 class="teacher-name">{{ teacher.fullName }}</h3>
           <span class="gender-badge" [class]="'gender-' + getGenderClass(teacher.gender)">
-            {{ teacher.gender }}
+            {{ teacher.gender}}
           </span>
         </div>
       </div>
@@ -170,34 +85,19 @@
         </div>
         <div class="info-row">
           <span class="info-label">Qualification</span>
-          <span class="info-value">{{ teacher.qualification }}</span>
+          <span class="info-value">{{ teacher.qualification ?? '—' }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Experience</span>
           <span class="info-value">
-            {{ teacher.experienceYear != null ? teacher.experienceYear + ' yr' + (teacher.experienceYear !== 1 ? 's' : '') : '—' }}
+            {{ teacher.experienceYear != null ? teacher.experienceYear + ' yr' + (teacher.experienceYear !== 1 ? 's' :
+            '') : '—' }}
           </span>
         </div>
         <div class="info-row">
           <span class="info-label">System ID</span>
           <span class="info-value">{{ teacher.id != null ? '#' + teacher.id : '—' }}</span>
         </div>
-
-        @if (teacher.createdBy || teacher.createdAt) {
-          <div class="card-divider" style="margin: 0.5rem 0;"></div>
-        }
-        @if (teacher.createdBy) {
-          <div class="info-row">
-            <span class="info-label">Created By</span>
-            <span class="info-value">{{ teacher.createdBy }}</span>
-          </div>
-        }
-        @if (teacher.createdAt) {
-          <div class="info-row">
-            <span class="info-label">Created At</span>
-            <span class="info-value">{{ formatDate(teacher.createdAt) }}</span>
-          </div>
-        }
       </div>
 
       <div class="card-actions">
@@ -211,34 +111,6 @@
 
     </div>
     }
-  </div>
-  }
-
-  <!-- Pagination -->
-  @if (!isLoading && !loadError && pagedData && pagedData.totalPages > 1) {
-  <div class="pagination-row fade-in-up">
-    <button
-      class="page-btn"
-      (click)="prevPage()"
-      [disabled]="pagedData.firstPage"
-      id="teacher-prev-btn"
-    >&#8592; Prev</button>
-
-    @for (p of getPageNumbers(); track p) {
-      <button
-        class="page-btn"
-        [class.page-active]="p === pageNo"
-        (click)="goToPage(p)"
-        id="teacher-page-btn-{{ p }}"
-      >{{ p }}</button>
-    }
-
-    <button
-      class="page-btn"
-      (click)="nextPage()"
-      [disabled]="pagedData.lastPage"
-      id="teacher-next-btn"
-    >Next &#8594;</button>
   </div>
   }
 

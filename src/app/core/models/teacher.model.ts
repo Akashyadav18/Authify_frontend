@@ -11,12 +11,10 @@ export interface TeacherReq {
 
 export interface TeacherRes {
   id: number;
-  teacherId: string | null;    // may be null
+  teacherId: string;
   fullName: string;
   phoneNumber: string | null;
   experienceYear: number;
   qualification: string;
   gender: Gender;
-  createdBy: string | null;    // may be null
-  createdAt: string | null;    // ISO LocalDateTime from Spring Boot — may be null
 }
