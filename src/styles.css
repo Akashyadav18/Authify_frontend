@@ -39,6 +39,7 @@ body {
   background: var(--bg);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* prevent any element causing horizontal scroll on mobile */
 }
 
 a { color: var(--accent); text-decoration: none; }
@@ -399,9 +400,6 @@ hr { border: none; border-top: 1px solid var(--border); }
 
 /* ── Small phones (< 480px) ─────────────────────────────────────── */
 @media (max-width: 479px) {
-  /* Navbar: hide nav links, shrink padding */
-  .nav-links { display: none; }
-  .nav-user-email { display: none; }
   .site-nav-inner { padding: 0 0.75rem; }
 
   /* OTP boxes: slightly smaller */
@@ -422,7 +420,6 @@ hr { border: none; border-top: 1px solid var(--border); }
 
 /* ── Mobile landscape / small tablets (480px – 639px) ────────────── */
 @media (min-width: 480px) and (max-width: 639px) {
-  .nav-links { display: none; }
   .feature-grid { grid-template-columns: 1fr 1fr; }
   .form-card { padding: 1.5rem; }
   .auth-page { padding: 1.5rem 1rem; }
