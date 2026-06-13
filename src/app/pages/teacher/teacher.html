@@ -16,10 +16,87 @@
     </button>
   </div>
 
+  <!-- Filter Row 1: ID, Name, Qualification -->
+  <div class="filter-row fade-in-up">
+    <div class="filter-group">
+      <label class="filter-label" for="teacher-filter-id">ID</label>
+      <input
+        type="number"
+        id="teacher-filter-id"
+        class="filter-input filter-input-sm"
+        placeholder="Filter by ID"
+        [(ngModel)]="filterId"
+        (ngModelChange)="onIdChange()"
+      />
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="teacher-filter-name">Name</label>
+      <input
+        type="text"
+        id="teacher-filter-name"
+        class="filter-input"
+        placeholder="Filter by name"
+        [(ngModel)]="filterName"
+        (ngModelChange)="onNameInput()"
+      />
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="teacher-filter-qual">Qualification</label>
+      <input
+        type="text"
+        id="teacher-filter-qual"
+        class="filter-input"
+        placeholder="Filter by qualification"
+        [(ngModel)]="filterQual"
+        (ngModelChange)="onQualInput()"
+      />
+    </div>
+  </div>
+
+  <!-- Filter Row 2: Dates, Sort -->
+  <div class="filter-row fade-in-up">
+    <div class="filter-group">
+      <label class="filter-label" for="teacher-start-date">From</label>
+      <input
+        type="date"
+        id="teacher-start-date"
+        class="filter-input"
+        [(ngModel)]="startDate"
+        (ngModelChange)="onDateChange()"
+      />
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="teacher-end-date">To</label>
+      <input
+        type="date"
+        id="teacher-end-date"
+        class="filter-input"
+        [(ngModel)]="endDate"
+        (ngModelChange)="onDateChange()"
+      />
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="teacher-sort-by">Sort By</label>
+      <select id="teacher-sort-by" class="filter-select" [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+        @for (opt of sortByOptions; track opt) {
+          <option [value]="opt">{{ opt }}</option>
+        }
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="teacher-sort-dir">Order</label>
+      <select id="teacher-sort-dir" class="filter-select" [(ngModel)]="sortDir" (ngModelChange)="onSortChange()">
+        @for (opt of sortDirOptions; track opt) {
+          <option [value]="opt">{{ opt }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
   <!-- Count -->
-  @if (!isLoading && !loadError && teacherList.length > 0) {
+  @if (!isLoading && !loadError && pagedResponse) {
   <div class="list-meta fade-in-up">
-    <span class="list-count">{{ teacherList.length }} teacher{{ teacherList.length !== 1 ? 's' : '' }} found</span>
+    <span class="list-count">{{ pagedResponse.totalElements }} teacher{{ pagedResponse.totalElements !== 1 ? 's' : '' }} found</span>
   </div>
   }
 
@@ -40,7 +117,7 @@
       @if (!isLoggedIn) {
       <a class="btn-login" routerLink="/auth" id="teacher-login-btn">Sign In</a>
       } @else {
-      <button class="btn-retry" (click)="getAllTeachers()" id="teacher-retry-btn">Retry</button>
+      <button class="btn-retry" (click)="loadTeachers()" id="teacher-retry-btn">Retry</button>
       }
     </div>
   </div>
@@ -67,7 +144,7 @@
         <div class="card-identity">
           <h3 class="teacher-name">{{ teacher.fullName }}</h3>
           <span class="gender-badge" [class]="'gender-' + getGenderClass(teacher.gender)">
-            {{ teacher.gender}}
+            {{ teacher.gender }}
           </span>
         </div>
       </div>
@@ -90,13 +167,26 @@
         <div class="info-row">
           <span class="info-label">Experience</span>
           <span class="info-value">
-            {{ teacher.experienceYear != null ? teacher.experienceYear + ' yr' + (teacher.experienceYear !== 1 ? 's' :
-            '') : '—' }}
+            {{ teacher.experienceYear != null ? teacher.experienceYear + ' yr' + (teacher.experienceYear !== 1 ? 's' : '') : '—' }}
           </span>
         </div>
         <div class="info-row">
           <span class="info-label">System ID</span>
           <span class="info-value">{{ teacher.id != null ? '#' + teacher.id : '—' }}</span>
+        </div>
+
+        @if (teacher.createdBy || teacher.createdAt) {
+          <div class="card-divider" style="margin: 0.5rem 0;"></div>
+        }
+        @if (teacher.createdBy) {
+          <div class="info-row">
+            <span class="info-label">Created By</span>
+            <span class="info-value">{{ teacher.createdBy }}</span>
+          </div>
+        }
+        <div class="info-row">
+          <span class="info-label">Created At</span>
+          <span class="info-value">{{ formatDate(teacher.createdAt) }}</span>
         </div>
       </div>
 
@@ -112,6 +202,34 @@
     </div>
     }
   </div>
+
+  <!-- Pagination -->
+  @if (pagedResponse && pagedResponse.totalPages > 1) {
+  <div class="pagination-row fade-in-up">
+    <button
+      class="page-btn"
+      [disabled]="pagedResponse.firstPage"
+      (click)="onPageChange(pageNo - 1)">
+      ‹ Prev
+    </button>
+
+    @for (p of getPageNumbers(); track p) {
+      <button
+        class="page-btn"
+        [class.page-btn-active]="p === pageNo"
+        (click)="onPageChange(p)">
+        {{ p }}
+      </button>
+    }
+
+    <button
+      class="page-btn"
+      [disabled]="pagedResponse.lastPage"
+      (click)="onPageChange(pageNo + 1)">
+      Next ›
+    </button>
+  </div>
+  }
   }
 
 </div>

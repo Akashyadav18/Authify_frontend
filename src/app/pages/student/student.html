@@ -16,10 +16,41 @@
     </button>
   </div>
 
+  <!-- Filter / Sort Row -->
+  <div class="filter-row fade-in-up">
+    <div class="filter-group">
+      <label class="filter-label" for="student-search">Search</label>
+      <input
+        type="text"
+        id="student-search"
+        class="filter-input filter-input-wide"
+        placeholder="Search by username, name, rollNo"
+        [(ngModel)]="search"
+        (ngModelChange)="onSearchInput()"
+      />
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="student-sort-by">Sort By</label>
+      <select id="student-sort-by" class="filter-select" [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+        @for (opt of sortByOptions; track opt) {
+          <option [value]="opt">{{ opt }}</option>
+        }
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label" for="student-sort-dir">Order</label>
+      <select id="student-sort-dir" class="filter-select" [(ngModel)]="sortDir" (ngModelChange)="onSortChange()">
+        @for (opt of sortDirOptions; track opt) {
+          <option [value]="opt">{{ opt }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
   <!-- Count -->
-  @if (!isLoading && !loadError && studentList.length > 0) {
+  @if (!isLoading && !loadError && pagedResponse) {
   <div class="list-meta fade-in-up">
-    <span class="list-count">{{ studentList.length }} student{{ studentList.length !== 1 ? 's' : '' }} found</span>
+    <span class="list-count">{{ pagedResponse.totalElements }} student{{ pagedResponse.totalElements !== 1 ? 's' : '' }} found</span>
   </div>
   }
 
@@ -40,7 +71,7 @@
       @if (!isLoggedIn) {
       <a class="btn-login" routerLink="/auth" id="student-login-btn">Sign In</a>
       } @else {
-      <button class="btn-retry" (click)="getAllStudents()" id="student-retry-btn">Retry</button>
+      <button class="btn-retry" (click)="loadStudents()" id="student-retry-btn">Retry</button>
       }
     </div>
   </div>
@@ -136,6 +167,34 @@
     </div>
     }
   </div>
+
+  <!-- Pagination -->
+  @if (pagedResponse && pagedResponse.totalPages > 1) {
+  <div class="pagination-row fade-in-up">
+    <button
+      class="page-btn"
+      [disabled]="pagedResponse.firstPage"
+      (click)="onPageChange(pageNo - 1)">
+      ‹ Prev
+    </button>
+
+    @for (p of getPageNumbers(); track p) {
+      <button
+        class="page-btn"
+        [class.page-btn-active]="p === pageNo"
+        (click)="onPageChange(p)">
+        {{ p }}
+      </button>
+    }
+
+    <button
+      class="page-btn"
+      [disabled]="pagedResponse.lastPage"
+      (click)="onPageChange(pageNo + 1)">
+      Next ›
+    </button>
+  </div>
+  }
   }
 
 </div>

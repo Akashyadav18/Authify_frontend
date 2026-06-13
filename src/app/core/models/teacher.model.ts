@@ -17,4 +17,6 @@ export interface TeacherRes {
   experienceYear: number;
   qualification: string;
   gender: Gender;
+  createdBy: string | null;
+  createdAt: string | null;   // ISO LocalDateTime — may be null
 }

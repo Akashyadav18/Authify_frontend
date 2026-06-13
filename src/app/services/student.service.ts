@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { StudentReq, StudentRes } from '../core/models/student.model';
+import { PagedResponse, StudentQueryParams } from '../core/models/pagination.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +13,18 @@ export class StudentService {
 
   constructor(private http: HttpClient) {}
 
-  getAllStudents(): Observable<StudentRes[]> {
-    return this.http.get<StudentRes[]>(`${this.baseUrl}/getAllStudents`);
+  getAllStudents(params: StudentQueryParams): Observable<PagedResponse<StudentRes>> {
+    let httpParams = new HttpParams()
+      .set('pageNo', params.pageNo.toString())
+      .set('pageSize', params.pageSize.toString())
+      .set('sortBy', params.sortBy)
+      .set('sortDir', params.sortDir);
+
+    if (params.search?.trim()) {
+      httpParams = httpParams.set('search', params.search.trim());
+    }
+
+    return this.http.get<PagedResponse<StudentRes>>(`${this.baseUrl}/getAllStudents`, { params: httpParams });
   }
 
   getStudentById(stdId: string): Observable<StudentRes> {
@@ -35,4 +46,3 @@ export class StudentService {
     });
   }
 }
-

@@ -1,23 +1,43 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { StudentService } from '../../services/student.service';
 import { ToastService } from '../../core/services/toast.service';
 import { AuthService } from '../../core/services/auth.service';
 import { StudentRes } from '../../core/models/student.model';
+import { PagedResponse, StudentQueryParams } from '../../core/models/pagination.model';
 
 @Component({
   selector: 'app-student',
-  imports: [NavbarComponent, ConfirmDialogComponent, RouterLink],
+  imports: [NavbarComponent, ConfirmDialogComponent, RouterLink, FormsModule],
   templateUrl: './student.html',
   styleUrl: './student.css',
 })
-export class Student implements OnInit {
-  studentList: StudentRes[] = [];
+export class Student implements OnInit, OnDestroy {
+  // ── Paged data ────────────────────────────────────
+  pagedResponse: PagedResponse<StudentRes> | null = null;
   isLoading = false;
   loadError = '';
 
+  // ── Filter / Sort state ───────────────────────────
+  pageNo = 1;
+  pageSize = 9;
+  sortBy = 'id';
+  sortDir = 'asc';
+  search = '';
+
+  sortByOptions = ['id', 'username', 'rollNo', 'gender'];
+  sortDirOptions = ['asc', 'desc'];
+
+  // ── Debounce ──────────────────────────────────────
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
+  // ── Delete confirm ────────────────────────────────
   showConfirm = false;
   selectedStudent: StudentRes | null = null;
 
@@ -27,45 +47,60 @@ export class Student implements OnInit {
     private router: Router,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.getAllStudents();
+    // Wire up search debounce
+    this.searchSubject
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.pageNo = 1;
+        this.loadStudents();
+      });
+
+    this.loadStudents();
   }
 
-  // ── Permission helpers ───────────────────────────
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ── Permission helpers ────────────────────────────
   private get role(): string {
     return (this.auth.getRoleFromToken() ?? '').toUpperCase();
   }
 
-  /**
-   * Student CRUD permissions (matches with or without ROLE_ prefix, any case):
-   *   ADMIN   → full CRUD
-   *   TEACHER → full CRUD
-   *   USER    → Read only (blocked)
-   */
   private canMutateStudent(): boolean {
     const r = this.role;
-    // Explicitly block USER role — let ADMIN, TEACHER, and unknown through
     if (r.includes('USER')) return false;
     return true;
   }
 
-  // ── Data ─────────────────────────────────────────
-  getAllStudents() {
+  // ── Data loading ──────────────────────────────────
+  loadStudents() {
     this.isLoading = true;
     this.loadError = '';
     this.cdr.detectChanges();
 
-    this.studentService.getAllStudents().subscribe({
+    const params: StudentQueryParams = {
+      pageNo: this.pageNo,
+      pageSize: this.pageSize,
+      sortBy: this.sortBy,
+      sortDir: this.sortDir,
+      search: this.search,
+    };
+
+    this.studentService.getAllStudents(params).subscribe({
       next: (res) => {
-        this.studentList = Array.isArray(res) ? res : [];
+        this.pagedResponse = res;
         this.isLoading = false;
         this.loadError = '';
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.isLoading = false;
+        this.pagedResponse = null;
         if (err.status === 401) {
           this.loadError = 'You must be logged in to view students.';
         } else if (err.status === 403) {
@@ -80,7 +115,39 @@ export class Student implements OnInit {
     });
   }
 
-  // ── Actions ──────────────────────────────────────
+  // ── Filter/Sort handlers ──────────────────────────
+  onSearchInput() {
+    this.searchSubject.next(this.search);
+  }
+
+  onSortChange() {
+    this.pageNo = 1;
+    this.loadStudents();
+  }
+
+  // ── Pagination ────────────────────────────────────
+  onPageChange(page: number) {
+    if (page < 1 || page > (this.pagedResponse?.totalPages ?? 1)) return;
+    this.pageNo = page;
+    this.loadStudents();
+  }
+
+  getPageNumbers(): number[] {
+    const total = this.pagedResponse?.totalPages ?? 1;
+    const maxPages = 5;
+    const half = Math.floor(maxPages / 2);
+    let start = Math.max(1, this.pageNo - half);
+    let end = Math.min(total, start + maxPages - 1);
+    if (end - start < maxPages - 1) start = Math.max(1, end - maxPages + 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }
+
+  // ── Helpers ───────────────────────────────────────
+  get studentList(): StudentRes[] {
+    return this.pagedResponse?.data ?? [];
+  }
+
+  // ── Actions ───────────────────────────────────────
   onCreateStudent(): void {
     if (!this.canMutateStudent()) {
       this.toast.error('You do not have permission to create students.');
@@ -113,9 +180,9 @@ export class Student implements OnInit {
     this.studentService.deleteStudent(stdId).subscribe({
       next: () => {
         this.toast.success('Student deleted successfully.');
-        this.studentList = this.studentList.filter((s) => s.stdId !== stdId);
         this.selectedStudent = null;
-        this.cdr.detectChanges();
+        this.pageNo = 1;
+        this.loadStudents();
       },
       error: (err) => {
         this.toast.error(err.error?.message ?? 'Failed to delete student.');
@@ -143,7 +210,6 @@ export class Student implements OnInit {
     return ['male', 'female', 'other'].includes(g) ? g : 'other';
   }
 
-  /** Formats ISO LocalDateTime string (or Spring Boot array) to a readable date */
   formatDate(value: string | null | undefined): string {
     if (!value) return '—';
     try {
