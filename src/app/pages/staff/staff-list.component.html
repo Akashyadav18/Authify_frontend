@@ -1,0 +1,106 @@
+<div class="staff-page">
+
+  <app-navbar />
+
+  <!-- Page Header -->
+  <div class="page-header fade-in-up">
+    <div class="header-badge">Staff Portal</div>
+    <h1 class="page-title">All Staff</h1>
+    <p class="page-subtitle">Browse staff members. Use the size selector to control how many records load at a time.</p>
+  </div>
+
+  <!-- Size Selector -->
+  <div class="size-row fade-in-up">
+    <label class="size-label" for="staff-page-size">Records per load</label>
+    <select
+      id="staff-page-size"
+      class="size-select"
+      [(ngModel)]="selectedSize"
+      (ngModelChange)="onSizeChange()">
+      @for (opt of sizeOptions; track opt) {
+        <option [ngValue]="opt">{{ opt }}</option>
+      }
+    </select>
+    @if (staffList.length > 0) {
+      <span class="list-count">{{ staffList.length }} loaded</span>
+    }
+  </div>
+
+  <!-- Loading (initial only — when list is empty) -->
+  @if (isLoading && staffList.length === 0) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading staff&hellip;</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (!isLoading && loadError && staffList.length === 0) {
+  <div class="error-state fade-in-up">
+    <h3 class="error-title">Could not load staff</h3>
+    <p class="error-desc">{{ loadError }}</p>
+    <div class="error-actions">
+      <button class="btn-retry" (click)="loadInitial()" id="staff-retry-btn">Retry</button>
+    </div>
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && !loadError && staffList.length === 0) {
+  <div class="empty-state fade-in-up">
+    <h3 class="empty-title">No staff records found</h3>
+    <p class="empty-desc">Staff data will appear here once available.</p>
+  </div>
+  }
+
+  <!-- Cards Grid -->
+  @if (staffList.length > 0) {
+  <div class="cards-grid fade-in-up">
+    @for (staff of staffList; track staff.id) {
+    <div class="staff-card">
+      <div class="card-header">
+        <div class="card-avatar" [class]="getRoleColor(staff.role)">
+          {{ getInitials(staff.name) }}
+        </div>
+        <div class="card-identity">
+          <h3 class="staff-name">{{ staff.name }}</h3>
+          <span class="staff-badge" [class]="getSectionColor(staff.section)">
+            {{ staff.section }}
+          </span>
+        </div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">Role</span>
+          <span class="info-value">{{ staff.role }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">System ID</span>
+          <span class="info-value">#{{ staff.id }}</span>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Load More -->
+  @if (hasNext) {
+  <div class="load-more-row fade-in-up">
+    <button
+      class="btn-load-more"
+      (click)="loadMore()"
+      [disabled]="isLoading"
+      id="staff-load-more-btn">
+      @if (isLoading) {
+        <span class="btn-spinner"></span>
+        Loading&hellip;
+      } @else {
+        Load More
+      }
+    </button>
+  </div>
+  }
+
+</div>

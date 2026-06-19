@@ -75,6 +75,15 @@ export const routes: Routes = [
       ),
   },
 
+  // ── Staff Route ──────────────────────────────────────────────────────
+  {
+    path: 'staff',
+    loadComponent: () =>
+      import('./pages/staff/staff-list.component').then(
+        (m) => m.StaffListComponent,
+      ),
+  },
+
   { path: '**', redirectTo: '' },
 ];
 

@@ -7,4 +7,5 @@ export const environment = {
   apiBaseUrl: 'https://authify-deployment-frll.onrender.com/api/auth',
   studentApi: 'https://authify-deployment-frll.onrender.com/api',
   teacherApi: 'https://authify-deployment-frll.onrender.com/api',
+  staffApi: 'https://authify-deployment-frll.onrender.com/api/staff',
 };

@@ -124,36 +124,7 @@
             {{ student.username ?? '—' }}
           </span>
         </div>
-
-        @if (student.createdBy || student.updatedBy || student.createdAt || student.updatedAt) {
-          <div class="card-divider" style="margin: 0.5rem 0;"></div>
-        }
-
-        @if (student.createdBy) {
-          <div class="info-row">
-            <span class="info-label">Created By</span>
-            <span class="info-value">{{ student.createdBy }}</span>
-          </div>
-        }
-        @if (student.createdAt) {
-          <div class="info-row">
-            <span class="info-label">Created At</span>
-            <span class="info-value">{{ formatDate(student.createdAt) }}</span>
-          </div>
-        }
-        @if (student.updatedBy) {
-          <div class="info-row">
-            <span class="info-label">Updated By</span>
-            <span class="info-value">{{ student.updatedBy }}</span>
-          </div>
-        }
-        @if (student.updatedAt) {
-          <div class="info-row">
-            <span class="info-label">Updated At</span>
-            <span class="info-value">{{ formatDate(student.updatedAt) }}</span>
-          </div>
-        }
-      </div>
+        </div>
 
       <div class="card-actions">
         <button class="btn-update" (click)="onUpdate(student)" id="update-btn-{{ student.id }}">

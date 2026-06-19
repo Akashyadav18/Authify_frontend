@@ -136,9 +136,55 @@
       </div>
     </section>
 
+    <!-- ── Pagination & Security ───────────────────── -->
+    <section class="info-section">
+      <h2 class="section-heading">Pagination &amp; Security</h2>
+      <p class="section-sub">Different modules use different pagination strategies and access levels.</p>
+
+      <div class="pagination-cards">
+
+        <div class="pagination-card">
+          <div class="pagination-card-header">
+            <span class="pagination-icon pagination-icon-offset">⊞</span>
+            <h3 class="pagination-title">Student &amp; Teacher</h3>
+          </div>
+          <span class="pagination-type-badge type-offset">Offset-based (Default Pageable)</span>
+          <ul class="pagination-details">
+            <li>Uses Spring Data's default <code>Pageable</code> with page numbers</li>
+            <li>Supports search, sort, and filter query params</li>
+            <li>Navigate to any page via Prev / Next / page buttons</li>
+            <li>Page size: 9 records per page</li>
+          </ul>
+          <div class="pagination-security">
+            <span class="security-badge security-protected">🔒 Auth Required</span>
+            <span class="security-note">Login needed to view — role-based CRUD permissions</span>
+          </div>
+        </div>
+
+        <div class="pagination-card">
+          <div class="pagination-card-header">
+            <span class="pagination-icon pagination-icon-keyset">⇥</span>
+            <h3 class="pagination-title">Staff</h3>
+          </div>
+          <span class="pagination-type-badge type-keyset">Keyset / Cursor-based</span>
+          <ul class="pagination-details">
+            <li>Uses keyset (cursor) pagination — no page numbers</li>
+            <li>"Load More" appends data, never replaces</li>
+            <li>Forward-only navigation via <code>nextCursor</code></li>
+            <li>Size options: 20 / 50 / 100 records per load</li>
+          </ul>
+          <div class="pagination-security">
+            <span class="security-badge security-public">🌐 Public</span>
+            <span class="security-note">No login required — anyone can view the staff list</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- ── Quick nav ───────────────────────────────── -->
-    @if (isLoggedIn) {
     <section class="quick-nav">
+      @if (isLoggedIn) {
       <a routerLink="/student" class="quick-card" id="home-student-link">
         <span class="quick-label">Students</span>
         <span class="quick-arrow">&rarr;</span>
@@ -147,8 +193,12 @@
         <span class="quick-label">Teachers</span>
         <span class="quick-arrow">&rarr;</span>
       </a>
+      }
+      <a routerLink="/staff" class="quick-card quick-card-public" id="home-staff-link">
+        <span class="quick-label">Staff <span class="quick-public-tag">Public</span></span>
+        <span class="quick-arrow">&rarr;</span>
+      </a>
     </section>
-    }
 
   </main>
 </div>

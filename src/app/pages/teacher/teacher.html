@@ -175,19 +175,6 @@
           <span class="info-value">{{ teacher.id != null ? '#' + teacher.id : '—' }}</span>
         </div>
 
-        @if (teacher.createdBy || teacher.createdAt) {
-          <div class="card-divider" style="margin: 0.5rem 0;"></div>
-        }
-        @if (teacher.createdBy) {
-          <div class="info-row">
-            <span class="info-label">Created By</span>
-            <span class="info-value">{{ teacher.createdBy }}</span>
-          </div>
-        }
-        <div class="info-row">
-          <span class="info-label">Created At</span>
-          <span class="info-value">{{ formatDate(teacher.createdAt) }}</span>
-        </div>
       </div>
 
       <div class="card-actions">

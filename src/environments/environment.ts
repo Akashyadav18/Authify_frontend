@@ -5,7 +5,8 @@
 
 export const environment = {
   production: false,
-  apiBaseUrl: 'https://authify-deployment-frll.onrender.com/api/auth',
-  studentApi: 'https://authify-deployment-frll.onrender.com/api',
-  teacherApi: 'https://authify-deployment-frll.onrender.com/api',
+  apiBaseUrl: 'http://localhost:8080/api/auth',
+  studentApi: 'http://localhost:8080/api',
+  teacherApi: 'http://localhost:8080/api',
+  staffApi: 'http://localhost:8080/api/staff',
 };
