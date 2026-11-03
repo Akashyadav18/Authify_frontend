@@ -4,8 +4,10 @@
 
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://authify-deployment-frll.onrender.com/api/auth',
-  studentApi: 'https://authify-deployment-frll.onrender.com/api',
-  teacherApi: 'https://authify-deployment-frll.onrender.com/api',
-  staffApi: 'https://authify-deployment-frll.onrender.com/api/staff',
+  apiBaseUrl: 'https://authify-v3.onrender.com/api/auth',
+  adminApiUrl: 'https://authify-v3.onrender.com/api/admin',
+  invitationUrl: 'https://authify-v3.onrender.com/api/auth/invitations',
+  studentApi: 'https://authify-v3.onrender.com/api',
+  teacherApi: 'https://authify-v3.onrender.com/api',
+  staffApi: 'https://authify-v3.onrender.com/api/staff',
 };

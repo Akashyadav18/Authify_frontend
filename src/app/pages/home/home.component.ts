@@ -22,21 +22,40 @@ export class HomeComponent implements OnInit {
   get currentUser() { return this.userService.currentUser(); }
 
   get role(): string {
-    return (this.auth.getRoleFromToken() ?? '').toUpperCase();
+    return (
+      this.auth.getNormalizedRole() ??
+      (this.currentUser?.role ?? '').replace(/^ROLE_/i, '').toUpperCase()
+    );
+  }
+
+  get displayName(): string {
+    return this.currentUser?.name || this.auth.getNameFromToken();
   }
 
   get roleLabel(): string {
-    if (this.role.includes('ADMIN'))   return 'Admin';
-    if (this.role.includes('TEACHER')) return 'Teacher';
-    if (this.role.includes('USER'))    return 'Student';
+    if (this.role === 'ADMIN')   return 'Admin';
+    if (this.role === 'TEACHER') return 'Teacher';
+    if (this.role === 'STUDENT' || this.role === 'USER') return 'Student';
     return 'Guest';
   }
 
   get roleBadgeClass(): string {
-    if (this.role.includes('ADMIN'))   return 'badge-admin';
-    if (this.role.includes('TEACHER')) return 'badge-teacher';
-    if (this.role.includes('USER'))    return 'badge-user';
+    if (this.role === 'ADMIN')   return 'badge-admin';
+    if (this.role === 'TEACHER') return 'badge-teacher';
+    if (this.role === 'STUDENT' || this.role === 'USER') return 'badge-user';
     return 'badge-guest';
+  }
+
+  get canApprove(): boolean {
+    return (
+      this.role === 'ADMIN' ||
+      this.role === 'TEACHER' ||
+      this.auth.hasPermission('APPROVE_USER')
+    );
+  }
+
+  get canInvite(): boolean {
+    return this.role === 'ADMIN' || this.auth.hasPermission('INVITE_USER');
   }
 
   ngOnInit() {

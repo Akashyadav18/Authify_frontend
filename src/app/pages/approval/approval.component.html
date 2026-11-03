@@ -1,0 +1,99 @@
+<div class="approval-page">
+  <app-navbar />
+
+  <app-confirm-dialog
+    [isVisible]="showConfirm"
+    [title]="confirmTitle"
+    [message]="confirmMessage"
+    confirmLabel="Reject"
+    cancelLabel="Keep Pending"
+    (confirmed)="confirmAction()"
+    (cancelled)="cancelAction()" />
+
+  <div class="page-header fade-in-up">
+    <div class="header-badge">Admin / Teacher</div>
+    <h1 class="page-title">Pending Approvals</h1>
+    <p class="page-subtitle">Review users who have self-registered and are waiting to be approved.</p>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="loading-state">
+    <div class="spinner spinner-dark"></div>
+    <p>Loading requests&hellip;</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (!loading() && loadError()) {
+  <div class="error-state fade-in-up">
+    <h3 class="error-title">Could not load requests</h3>
+    <p class="error-desc">{{ loadError() }}</p>
+    <button class="btn-retry" (click)="loadPending()">Try again</button>
+  </div>
+  }
+
+  <!-- List -->
+  @if (!loading() && !loadError()) {
+  <div class="approval-container fade-in-up">
+
+    @if (pendingUsers().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </div>
+      <h3 class="empty-title">No pending requests</h3>
+      <p class="empty-desc">All registration requests have been processed. Check back later.</p>
+    </div>
+    }
+
+    @if (pendingUsers().length > 0) {
+    <div class="approval-list-header">
+      <span>{{ pendingUsers().length }} pending request{{ pendingUsers().length !== 1 ? 's' : '' }}</span>
+    </div>
+
+    <div class="approval-list">
+      @for (user of pendingUsers(); track user.id) {
+      <div class="approval-row" [class.processing]="processingId() === user.id">
+
+        <div class="user-info">
+          <div class="user-avatar-sm">{{ user.name.charAt(0).toUpperCase() }}</div>
+          <div class="user-details">
+            <span class="user-name">{{ user.name }}</span>
+            <span class="user-email">{{ user.email }}</span>
+          </div>
+        </div>
+
+        <div class="row-right">
+          <span class="status-badge status-pending">{{ user.status }}</span>
+          <div class="row-actions">
+            <button
+              class="btn-approve"
+              (click)="onApprove(user)"
+              [disabled]="processingId() === user.id">
+              @if (processingId() === user.id) { <span class="spinner"></span> } @else { Approve }
+            </button>
+            <button
+              class="btn-reject"
+              (click)="onReject(user)"
+              [disabled]="processingId() === user.id">
+              Reject
+            </button>
+          </div>
+        </div>
+
+      </div>
+      }
+    </div>
+    }
+
+  </div>
+  }
+</div>
+

@@ -72,9 +72,7 @@ export class Student implements OnInit, OnDestroy {
   }
 
   private canMutateStudent(): boolean {
-    const r = this.role;
-    if (r.includes('USER')) return false;
-    return true;
+    return this.auth.hasRole('ADMIN') || this.auth.hasRole('TEACHER');
   }
 
   // ── Data loading ──────────────────────────────────

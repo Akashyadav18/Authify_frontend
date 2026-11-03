@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -13,6 +14,11 @@ export const routes: Routes = [
       import('./pages/auth/auth.component').then((m) => m.AuthComponent),
   },
   {
+    path: 'login',
+    redirectTo: 'auth',
+    pathMatch: 'full',
+  },
+  {
     path: 'verify-email',
     loadComponent: () =>
       import('./pages/verify-email/verify-email.component').then(
@@ -24,6 +30,44 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/forgot-password/forgot-password.component').then(
         (m) => m.ForgotPasswordComponent,
+      ),
+  },
+
+  // ── Public: no auth guard ────────────────────────────────────────────
+  {
+    path: 'setup',
+    loadComponent: () =>
+      import('./pages/setup-account/setup-account.component').then(
+        (m) => m.SetupAccountComponent,
+      ),
+  },
+  {
+    path: 'setup-account',
+    loadComponent: () =>
+      import('./pages/setup-account/setup-account.component').then(
+        (m) => m.SetupAccountComponent,
+      ),
+  },
+
+  // ── Approval (ADMIN + TEACHER) ───────────────────────────────────────
+  {
+    path: 'approval',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN', 'TEACHER'] },
+    loadComponent: () =>
+      import('./pages/approval/approval.component').then(
+        (m) => m.ApprovalComponent,
+      ),
+  },
+
+  // ── Invitation (ADMIN only) ──────────────────────────────────────────
+  {
+    path: 'invitation',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'], permissions: ['INVITE_USER'] },
+    loadComponent: () =>
+      import('./pages/invitation/invitation.component').then(
+        (m) => m.InvitationComponent,
       ),
   },
 
@@ -86,4 +130,3 @@ export const routes: Routes = [
 
   { path: '**', redirectTo: '' },
 ];
-

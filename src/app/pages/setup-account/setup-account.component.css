@@ -1,0 +1,46 @@
+.role-notice {
+  background: var(--accent-light);
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+}
+
+.missing-icon,
+.success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.missing-icon {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.success-icon {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.missing-title,
+.success-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.missing-desc,
+.success-desc {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+

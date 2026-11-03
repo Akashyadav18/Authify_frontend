@@ -25,11 +25,22 @@
       <a routerLink="/staff"
          routerLinkActive="nav-link-active"
          class="nav-link">Staff</a>
+      @if (canApprove) {
+        <a routerLink="/approval"
+           routerLinkActive="nav-link-active"
+           class="nav-link">Approvals</a>
+      }
+      @if (canInvite) {
+        <a routerLink="/invitation"
+           routerLinkActive="nav-link-active"
+           class="nav-link">Invitations</a>
+      }
     </div>
+
 
     <!-- Desktop auth actions -->
     <div class="nav-actions nav-actions-desktop">
-      @if (isLoggedIn && currentUser) {
+      @if (isLoggedIn) {
         <!-- User avatar button -->
         <div class="user-avatar-wrapper">
           <button class="user-avatar" (click)="toggleUserDropdown()" [attr.aria-expanded]="userDropdownOpen">
@@ -42,17 +53,17 @@
               <div class="user-dropdown-header">
                 <div class="user-dropdown-avatar">{{ getUserInitial() }}</div>
                 <div class="user-dropdown-info">
-                  <p class="user-dropdown-name">{{ currentUser.name }}</p>
-                  <p class="user-dropdown-email">{{ currentUser.email }}</p>
+                  <p class="user-dropdown-name">{{ displayName }}</p>
+                  <p class="user-dropdown-email">{{ displayEmail }}</p>
                 </div>
               </div>
-              @if (currentUser.role) {
+              @if (role) {
                 <div class="user-dropdown-role">
                   <span class="role-badge"
-                        [class.role-admin]="currentUser.role === 'ADMIN'"
-                        [class.role-teacher]="currentUser.role === 'TEACHER'"
-                        [class.role-user]="currentUser.role === 'USER'">
-                    {{ currentUser.role }}
+                        [class.role-admin]="role === 'ADMIN'"
+                        [class.role-teacher]="role === 'TEACHER'"
+                        [class.role-user]="role === 'STUDENT' || role === 'USER'">
+                    {{ role }}
                   </span>
                 </div>
               }
@@ -106,27 +117,40 @@
            routerLinkActive="nav-link-active"
            class="mobile-nav-link"
            (click)="closeMobileMenu()">Staff</a>
+        @if (canApprove) {
+          <a routerLink="/approval"
+             routerLinkActive="nav-link-active"
+             class="mobile-nav-link"
+             (click)="closeMobileMenu()">Approvals</a>
+        }
+        @if (canInvite) {
+          <a routerLink="/invitation"
+             routerLinkActive="nav-link-active"
+             class="mobile-nav-link"
+             (click)="closeMobileMenu()">Invitations</a>
+        }
       </div>
+
 
       <hr class="mobile-divider">
 
       <!-- Mobile auth section -->
       <div class="mobile-auth-section">
-        @if (isLoggedIn && currentUser) {
+        @if (isLoggedIn) {
           <div class="mobile-user-info">
             <div class="user-dropdown-avatar">{{ getUserInitial() }}</div>
             <div>
-              <p class="mobile-user-name">{{ currentUser.name }}</p>
-              <p class="mobile-user-email">{{ currentUser.email }}</p>
+              <p class="mobile-user-name">{{ displayName }}</p>
+              <p class="mobile-user-email">{{ displayEmail }}</p>
             </div>
           </div>
-          @if (currentUser.role) {
+          @if (role) {
             <div style="padding: 0 1.25rem; margin-bottom: 0.75rem;">
               <span class="role-badge"
-                    [class.role-admin]="currentUser.role === 'ADMIN'"
-                    [class.role-teacher]="currentUser.role === 'TEACHER'"
-                    [class.role-user]="currentUser.role === 'USER'">
-                {{ currentUser.role }}
+                    [class.role-admin]="role === 'ADMIN'"
+                    [class.role-teacher]="role === 'TEACHER'"
+                    [class.role-user]="role === 'STUDENT' || role === 'USER'">
+                {{ role }}
               </span>
             </div>
           }

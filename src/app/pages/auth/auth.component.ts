@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { ToastService } from '../../core/services/toast.service';
-import { Role } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-auth',
@@ -22,6 +21,8 @@ export class AuthComponent {
   loading = signal(false);
   error = signal('');
   success = signal('');
+  /** True after a successful self-registration — user must wait for approval */
+  registrationPending = signal(false);
 
   // Login fields
   loginEmail = '';
@@ -31,12 +32,12 @@ export class AuthComponent {
   regEmail = '';
   regName = '';
   regPassword = '';
-  regRole: Role = 'USER';
 
   switchTab(tab: 'login' | 'register') {
     this.activeTab.set(tab);
     this.error.set('');
     this.success.set('');
+    this.registrationPending.set(false);
   }
 
   onLogin() {
@@ -49,12 +50,16 @@ export class AuthComponent {
 
     this.auth.login({ email: this.loginEmail, password: this.loginPassword }).subscribe({
       next: () => {
-        // Fetch profile to check accountVerified
+        // Initialize current user immediately from the JWT token
+        this.userService.initFromToken();
+
+        // Fetch profile to verify profile data and check email verification
         this.userService.getProfile().subscribe({
           next: (user) => {
-            console.log("login....");
-            if (!user.accountVerified) {
-              // Email not verified — auto-send OTP then go to verify page
+            // Trigger OTP verify-email when backend explicitly marks account as not verified.
+            // This covers both self-registered users AND invited users whose email
+            // has not yet been confirmed (accountVerified === false).
+            if (user.accountVerified === false) {
               this.toast.info(`Welcome ${user.name}! Sending OTP to verify your email…`);
               this.auth.sendOtpVerifyEmail().subscribe({
                 complete: () => {
@@ -62,13 +67,12 @@ export class AuthComponent {
                   this.router.navigate(['/verify-email']);
                 },
                 error: () => {
-                  // Navigate anyway — user can resend from verify page
+                  // Even if OTP send fails, navigate so user can retry
                   this.loading.set(false);
                   this.router.navigate(['/verify-email']);
                 },
               });
             } else {
-              // Already verified — go home
               this.toast.success(`Welcome back, ${user.name}!`);
               this.loading.set(false);
               this.router.navigate(['/']);
@@ -99,15 +103,12 @@ export class AuthComponent {
     this.error.set('');
 
     this.auth
-      .register({ email: this.regEmail, name: this.regName, password: this.regPassword, role: this.regRole })
+      .register({ email: this.regEmail, name: this.regName, password: this.regPassword })
       .subscribe({
         next: () => {
           this.loading.set(false);
-          console.log("registering....");
-          this.success.set('Account created! Please login to verify your email.');
-          this.toast.success('Account created! Please sign in.');
-          // Switch to login tab — user will login and OTP is sent automatically
-          this.switchTab('login');
+          this.registrationPending.set(true);
+          this.toast.success('Registration submitted! Waiting for admin/teacher approval.');
         },
         error: (err) => {
           this.loading.set(false);

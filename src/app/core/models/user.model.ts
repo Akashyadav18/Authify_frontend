@@ -1,4 +1,6 @@
-export type Role = 'ADMIN' | 'TEACHER' | 'USER';
+import { AccountStatus } from './approval.model';
+
+export type Role = 'ADMIN' | 'TEACHER' | 'STUDENT' | 'STAFF' | 'USER';
 
 export interface User {
   userId: string;
@@ -6,6 +8,7 @@ export interface User {
   email: string;
   accountVerified: boolean;
   role?: Role;
+  status?: AccountStatus;
 }
 
 export interface LoginRequest {
@@ -13,11 +16,11 @@ export interface LoginRequest {
   password: string;
 }
 
+/** Role field removed — backend assigns default role on registration */
 export interface RegisterRequest {
   email: string;
   name: string;
   password: string;
-  role: Role;
 }
 
 export interface ResetPasswordRequest {

@@ -80,15 +80,15 @@ export class Teacher implements OnInit, OnDestroy {
   }
 
   private canCreateTeacher(): boolean {
-    return this.role.includes('ADMIN');
+    return this.auth.hasRole('ADMIN');
   }
 
   private canUpdateTeacher(): boolean {
-    return this.role.includes('ADMIN');
+    return this.auth.hasRole('ADMIN');
   }
 
   private canDeleteTeacher(): boolean {
-    return this.role.includes('ADMIN');
+    return this.auth.hasRole('ADMIN');
   }
 
   // ── Data loading ──────────────────────────────────

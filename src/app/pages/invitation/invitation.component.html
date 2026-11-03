@@ -1,0 +1,180 @@
+<div class="invitation-page">
+  <app-navbar />
+
+  <!-- Confirm Dialog -->
+  <app-confirm-dialog
+    [isVisible]="showConfirm"
+    [title]="confirmTitle"
+    [message]="confirmMessage"
+    confirmLabel="Revoke"
+    cancelLabel="Keep"
+    (confirmed)="confirmAction()"
+    (cancelled)="cancelAction()" />
+
+  <!-- Page Header -->
+  <div class="page-header fade-in-up">
+    <div class="header-top">
+      <div>
+        <div class="header-badge">Admin Only</div>
+        <h1 class="page-title">Invitations</h1>
+        <p class="page-subtitle">Manage email invitations. Invited users set their own name and password via the link.</p>
+      </div>
+      <button class="btn-invite" (click)="openModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Invite User
+      </button>
+    </div>
+  </div>
+
+  <!-- Invite Modal -->
+  @if (showModal()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-card fade-in-up" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Send Invitation</h2>
+          <button class="modal-close" (click)="closeModal()" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <form (ngSubmit)="onSend()" class="modal-form">
+          <div>
+            <label class="form-label" for="inv-email">Email address</label>
+            <input
+              id="inv-email"
+              type="email"
+              class="input-field"
+              placeholder="colleague@example.com"
+              [(ngModel)]="email"
+              name="email"
+              autocomplete="off" />
+          </div>
+
+          <div>
+            <label class="form-label" for="inv-role">Role</label>
+            <select id="inv-role" class="select-field" [(ngModel)]="role" name="role">
+              @for (r of roles; track r) {
+                <option [value]="r">{{ r }}</option>
+              }
+            </select>
+            <p class="field-hint">Invited user will be assigned this role upon account setup.</p>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="sending()">
+              @if (sending()) {
+                <span class="spinner"></span> Sending&hellip;
+              } @else {
+                Send Invitation
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner spinner-dark"></div>
+      <p>Loading invitations&hellip;</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (!loading() && loadError()) {
+    <div class="error-state fade-in-up">
+      <h3 class="error-title">Could not load invitations</h3>
+      <p class="error-desc">{{ loadError() }}</p>
+      <button class="btn-retry" (click)="loadInvitations()">Try again</button>
+    </div>
+  }
+
+  <!-- List -->
+  @if (!loading() && !loadError()) {
+    <div class="inv-container fade-in-up">
+
+      @if (invitations().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <h3 class="empty-title">No invitations sent yet</h3>
+          <p class="empty-desc">Click "Invite User" to send the first invitation.</p>
+        </div>
+      }
+
+      @if (invitations().length > 0) {
+        <div class="inv-list-header">
+          <span>{{ invitations().length }} invitation{{ invitations().length !== 1 ? 's' : '' }}</span>
+        </div>
+
+        <div class="inv-list">
+          @for (inv of invitations(); track inv.id) {
+            <div class="inv-row" [class.processing]="processingId() === inv.id">
+
+              <div class="user-info">
+                <div class="user-avatar-sm">{{ getInitial(inv.email) }}</div>
+                <div class="user-details">
+                  <span class="user-email-main">{{ inv.email }}</span>
+                  <span class="user-meta">
+                    <span class="role-badge {{ roleBadgeClass(inv.role) }}">{{ inv.role }}</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="row-right">
+                <span class="status-badge {{ statusBadgeClass(inv.status) }}">{{ inv.status }}</span>
+                <div class="row-actions">
+                  <button
+                    class="btn-resend"
+                    title="Resend invitation"
+                    (click)="onResend(inv)"
+                    [disabled]="processingId() === inv.id || inv.status === 'ACCEPTED'">
+                    @if (processingId() === inv.id) {
+                      <span class="spinner"></span>
+                    } @else {
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/>
+                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                      </svg>
+                    }
+                    Resend
+                  </button>
+                  <button
+                    class="btn-revoke"
+                    title="Revoke invitation"
+                    (click)="onRevoke(inv)"
+                    [disabled]="processingId() === inv.id || inv.status === 'REVOKED'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+                      <path d="M10 11v6m4-6v6"/><path d="M9 6V4h6v2"/>
+                    </svg>
+                    Revoke
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  }
+</div>
+

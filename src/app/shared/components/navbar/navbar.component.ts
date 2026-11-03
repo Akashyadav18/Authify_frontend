@@ -30,6 +30,38 @@ export class NavbarComponent implements OnInit {
     return this.userService.currentUser();
   }
 
+  /** Normalised role: strips ROLE_ prefix, uppercases */
+  get role(): string {
+    return (
+      this.auth.getNormalizedRole() ??
+      (this.currentUser?.role ?? '').replace(/^ROLE_/i, '').toUpperCase()
+    );
+  }
+
+  get isAdmin(): boolean {
+    return this.role === 'ADMIN';
+  }
+
+  get isTeacher(): boolean {
+    return this.role === 'TEACHER';
+  }
+
+  get canApprove(): boolean {
+    return this.isAdmin || this.isTeacher || this.auth.hasPermission('APPROVE_USER');
+  }
+
+  get canInvite(): boolean {
+    return this.isAdmin || this.auth.hasPermission('INVITE_USER');
+  }
+
+  get displayName(): string {
+    return this.currentUser?.name || this.auth.getNameFromToken();
+  }
+
+  get displayEmail(): string {
+    return this.currentUser?.email || this.auth.getEmailFromToken() || '';
+  }
+
   ngOnInit() {
     if (this.isLoggedIn && !this.currentUser) {
       this.userService.getProfile().subscribe();
@@ -37,12 +69,13 @@ export class NavbarComponent implements OnInit {
   }
 
   getUserInitial(): string {
-    const user = this.currentUser;
-    if (user?.name) {
-      return user.name.charAt(0).toUpperCase();
+    const name = this.displayName;
+    if (name) {
+      return name.charAt(0).toUpperCase();
     }
-    if (user?.email) {
-      return user.email.charAt(0).toUpperCase();
+    const email = this.displayEmail;
+    if (email) {
+      return email.charAt(0).toUpperCase();
     }
     return 'U';
   }
